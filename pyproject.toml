@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "numpy-neural-net"
+version = "0.1.0"
+description = "Project to code up a fully connected feed forward neural network from the mathematics using only numpy"
+authors = ["Curtis Irvine <curtis.j.irvine@bbc.co.uk>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+numpy = "^1.26.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
