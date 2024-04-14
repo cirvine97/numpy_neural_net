@@ -247,7 +247,7 @@ class NeuralNet:
             
             # Cost information
             if epoch%100==0 and print_cost:
-                print(cost)
+                print(f"Epoch {epoch} cost: {cost}")
             if epoch % 100 == 0 or epoch == training_epochs:
                 self.training_costs.append(cost)
 
