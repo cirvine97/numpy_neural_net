@@ -25,7 +25,7 @@ class NeuralNet:
         self.parameters = {}
         for l in range (1, self.L + 1):
             self.parameters[f"W{l}"] = np.random.randn(layer_dims[l], layer_dims[l-1]) * 0.1
-            self.parameters[f"B{l}"] = np.zeros((layer_dims[l], self.m))
+            self.parameters[f"B{l}"] = np.zeros((layer_dims[l], 1))
 
 
     def relu(
@@ -267,8 +267,12 @@ class NeuralNet:
         Args:
             X_test (np.array): Input test data.
         """
-        # Ensure the shape is as expected 
-        X_test = X_test.reshape(self.X[0], -1)
+        # Check for the case of a single input 
+        try: 
+             X_test.shape[1]
+        except IndexError:
+             X_test = X_test.reshape(-1, 1)
+        
         self.forwards_pass(X_test)
 
         return self.cache[f"A{self.L}"]
