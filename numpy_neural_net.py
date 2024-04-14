@@ -147,12 +147,16 @@ class NeuralNet:
 
     def forwards_pass(
               self,
+              X_input: np.array
     ):
         """
         Perform a forward pass through the neural network setting the cache of the linear and activation matrices as an attribute.
+
+        Args:
+            X_input (np.array): Input data matrix.
         """
         self.cache = {}
-        self.cache['A0'] = self.X
+        self.cache['A0'] = X_input
 
         # All hidden layers use ReLU
         for l in range(1, self.L+1):
@@ -242,7 +246,7 @@ class NeuralNet:
         self.training_costs = []
 
         for epoch in range(0, training_epochs):
-            self.forwards_pass()
+            self.forwards_pass(self.X)
             cost = self.compute_cost(self.cache[f"A{self.L}"], self.Y, self.type)
             
             # Cost information
@@ -252,3 +256,40 @@ class NeuralNet:
                 self.training_costs.append(cost)
 
             self.backwards_pass(self.learning_rate)
+
+
+    def predict_probability(
+              self,
+              X_test
+    ):
+        """Return the raw ouput of the final layer neurons for an input case.
+
+        Args:
+            X_test (np.array): Input test data.
+        """
+        # Ensure the shape is as expected 
+        X_test = X_test.reshape(self.X[0], -1)
+        self.forwards_pass(X_test)
+
+        return self.cache[f"A{self.L}"]
+    
+
+    def predict(
+              self,
+              X_test: np.array
+    ):
+        """Return predictions of the neural network, mapping binary values if the type is classification.
+
+        Args:
+            X_test (np.array): Input test data.
+        """
+        raw_output = self.predict_probability(X_test)
+
+        if self.type == 'binary classification':
+              return (raw_output > 0.5).astype(int)
+        elif self.type == 'multilabel classification':
+             # Map the elements for each test sample to 1 for the largest element and 0 for the rest.
+             max_indices = np.argmax(raw_output, axis=0)
+             return np.eye(raw_output.shape[0])[max_indices].T
+        elif self.type == 'regression':
+             return raw_output
